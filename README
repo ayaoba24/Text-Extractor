@@ -1,5 +1,7 @@
 Text Statistics
+
 README & Code Documentation
+
 Purpose
 The Text Statistics program is a Go tool that analyzes a block of text and reports key metrics about it: word count, character count, letter count, punctuation count, and line count. It is built entirely with Gos standard strings and unicode packages — no external dependencies are required.
 
