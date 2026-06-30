@@ -1,0 +1,146 @@
+Text Statistics
+README & Code Documentation
+Purpose
+The Text Statistics program is a Go tool that analyzes a block of text and reports key metrics about it: word count, character count, letter count, punctuation count, and line count. It is built entirely with Gos standard strings and unicode packages — no external dependencies are required.
+
+ Where It Can Be Used
+• Writing tools — show word/character counts like a word processor
+• Content moderation — analyze text composition before publishing
+• Document analysis — quickly summarize the structure of large text files
+• Typing/grammar apps — track punctuation and letter usage
+• Educational projects — demonstrate text parsing and unicode handling in Go
+
+Programming Language
+Language: Go (Golang)
+• Version: Go 1.18+
+• Packages used: fmt, strings, unicode
+• No external dependencies and no regexp required
+
+ What Each Statistic Measures
+Statistic
+How Its Counted
+Words
+Split text by whitespace using strings.Fields
+Characters
+Total runes in the text, including spaces and punctuation
+Letters
+Characters where unicode.IsLetter is true (a-z, A-Z, etc.)
+Punctuation
+Characters where unicode.IsPunct is true (., ,, !, ? etc.)
+Lines
+Number of newline characters (\n) plus 1
+
+
+ Full Code
+package main
+
+import (
+    "fmt"
+    "strings"
+    "unicode"
+)
+
+func textStats(text string) (int, int, int, int, int) {
+    words := len(strings.Fields(text))
+    characters := len([]rune(text))
+
+    letters := 0
+    punctuation := 0
+    for _, c := range text {
+        if unicode.IsLetter(c) {
+            letters++
+        } else if unicode.IsPunct(c) {
+            punctuation++
+        }
+    }
+
+    lines := strings.Count(text, "\n") + 1
+
+    return words, characters, letters, punctuation, lines
+}
+
+func main() {
+    text := "Go is awesome."
+    words, characters, letters, punctuation, lines := textStats(text)
+
+    fmt.Println("Words:", words)
+    fmt.Println("Characters:", characters)
+    fmt.Println("Letters:", letters)
+    fmt.Println("Punctuation:", punctuation)
+    fmt.Println("Lines:", lines)
+}
+
+Line-by-Line Explanation
+
+Package & Imports
+package main
+Declares this file as the entry point of the Go program. Every executable Go program must have package main.
+
+import ( "fmt"  "strings"  "unicode" )
+Imports three standard library packages:
+• fmt — used to print output to the terminal
+• strings — provides functions for splitting and counting substrings
+• unicode — classifies individual characters as letters, punctuation, digits, etc.
+
+Function: textStats
+func textStats(text string) (int, int, int, int, int) {
+Defines a function named textStats that takes a string of text as input and returns five integers — words, characters, letters, punctuation, and lines, in that order.
+
+words := len(strings.Fields(text))
+strings.Fields splits the text into a slice of words wherever whitespace occurs, producing something like ["Go", "is", "awesome."]. len() then counts how many words are in that slice.
+
+characters := len([]rune(text))
+Converts the text into a slice of runes (individual Unicode characters) and counts them. This is safer than len(text) directly, since that would count bytes rather than characters, which can differ for non-ASCII text.
+
+letters := 0
+punctuation := 0
+Initializes two counters at zero, ready to be incremented as the text is scanned character by character.
+
+for _, c := range text {
+Loops through every character (rune) in the text, one at a time. The underscore discards the index since only the character itself is needed.
+
+if unicode.IsLetter(c) {
+    letters++
+Checks if the current character is a letter (any alphabetic character, not limited to English). If true, increments the letters counter.
+
+} else if unicode.IsPunct(c) {
+    punctuation++
+If the character was not a letter, this checks whether it is a punctuation mark such as a period, comma, or exclamation point. If true, increments the punctuation counter.
+
+lines := strings.Count(text, "\n") + 1
+strings.Count counts how many newline characters appear in the text. Since a single line of text with zero newlines still counts as one line, 1 is added to the result. Two newlines, for example, would split text into three lines.
+
+return words, characters, letters, punctuation, lines
+Sends all five calculated values back to whoever called the function, in the same order declared in the function signature.
+
+main() Function
+text := "Go is awesome."
+words, characters, letters, punctuation, lines := textStats(text)
+Defines a sample text string, then calls textStats and captures all five returned values into separate variables. The order here must match the order returned by the function.
+
+fmt.Println("Words:", words)
+... (and so on for each statistic)
+Each line prints a label followed by the corresponding count, with fmt.Println automatically adding a space between them and a newline after.
+
+Sample Output
+Statistic
+Value
+Words
+3
+Characters
+14
+Letters
+11
+Punctuation
+1
+Lines
+1
+
+
+How to Run
+• Save the code in a file called main.go
+• Open your terminal in the same folder
+go run main.go
+The statistics will print to your terminal.
+
+— End of README —
